@@ -1,6 +1,6 @@
 === Cases. Kernel. Private Feeds ===
 Contributors: SergeyBiryukov
-Tags: cases, admin, menu
+Tags: cases, access, feeds
 Requires at least: 3.1
 Tested up to: 3.4
 Stable tag: 0.1
