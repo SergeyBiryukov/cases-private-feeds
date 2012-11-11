@@ -5,23 +5,34 @@ Plugin URI: http://wpcases.com/
 Description: Ограничивает доступ к RSS-лентам.
 Author: Sergey Biryukov
 Author URI: http://profiles.wordpress.org/sergeybiryukov/
-Version: 0.1.1
+Version: 0.1.2
 */ 
 
 function cpf_disable_feed() {
+	wp_die( sprintf( 'RSS-ленты нет. Пожалуйста, посетите <a href="%s">главную страницу</a>.', home_url( '/' ) ) );
+}
+
+function cpf_check_key( $query_vars ) {
+	if ( ! isset( $query_vars['feed'] ) )
+		return $query_vars;
+
 	if ( isset( $_GET['uid'] ) && isset( $_GET['key'] ) ) {
 		$user = get_userdata( (int) $_GET['uid'] );
-		if ( isset( $user->user_email ) && wp_hash( $user->user_email ) == $_GET['key'] )
-			return;
+		if ( isset( $user->user_email ) && wp_hash( $user->user_email ) == $_GET['key'] ) {
+			add_filter( 'restricted_site_access_is_restricted', '__return_false' );
+			return $query_vars;
+		}
 	}
 
-	wp_die( sprintf( 'RSS-ленты нет. Пожалуйста, посетите <a href="%s">главную страницу</a>.', home_url( '/' ) ) );
-}  
-add_action( 'do_feed',      'cpf_disable_feed', 1 );
-add_action( 'do_feed_rdf',  'cpf_disable_feed', 1 );
-add_action( 'do_feed_rss',  'cpf_disable_feed', 1 );
-add_action( 'do_feed_rss2', 'cpf_disable_feed', 1 );
-add_action( 'do_feed_atom', 'cpf_disable_feed', 1 );
+	add_action( 'do_feed',      'cpf_disable_feed', 1 );
+	add_action( 'do_feed_rdf',  'cpf_disable_feed', 1 );
+	add_action( 'do_feed_rss',  'cpf_disable_feed', 1 );
+	add_action( 'do_feed_rss2', 'cpf_disable_feed', 1 );
+	add_action( 'do_feed_atom', 'cpf_disable_feed', 1 );
+
+	return $query_vars;
+}
+add_action( 'request', 'cpf_check_key' );
 
 function cpf_add_key_to_feed_links( $url ) {
 	$user = wp_get_current_user();

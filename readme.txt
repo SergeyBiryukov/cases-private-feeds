@@ -20,6 +20,9 @@ Protects all feeds with a unique key for each user.
 
 == Changelog ==
 
+= 0.1.2 =
+* Added compatibility with Restricted Site Access plugin
+
 = 0.1.1 =
 * Allow remote access to feeds by passing user ID along with the key
 
